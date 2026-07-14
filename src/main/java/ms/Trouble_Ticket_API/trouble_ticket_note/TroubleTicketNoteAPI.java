@@ -1,5 +1,6 @@
 package ms.Trouble_Ticket_API.trouble_ticket_note;
 
+import jakarta.validation.Valid;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.entities.Note;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.dtos.NoteCreateRequest;
 import org.springframework.http.ResponseEntity;
@@ -12,5 +13,5 @@ public interface TroubleTicketNoteAPI {
 	
 	
 	@PostMapping("{id}/note")
-	ResponseEntity<Note> addTroubleTicketNote(@RequestBody NoteCreateRequest request);
+	ResponseEntity<Note> addTroubleTicketNote(@Valid @RequestBody NoteCreateRequest request);
 }

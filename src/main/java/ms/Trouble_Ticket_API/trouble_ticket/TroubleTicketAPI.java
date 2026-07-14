@@ -1,5 +1,6 @@
 package ms.Trouble_Ticket_API.trouble_ticket;
 
+import jakarta.validation.Valid;
 import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCreateRequest;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface TroubleTicketAPI {
 	
 	@PostMapping
-	ResponseEntity<TroubleTicket> createTroubleTicket(@RequestBody TroubleTicketCreateRequest request);
+	ResponseEntity<TroubleTicket> createTroubleTicket(@Valid @RequestBody TroubleTicketCreateRequest request);
 	
 	@GetMapping
 	ResponseEntity<List<TroubleTicket>> listTroubleTicket();
