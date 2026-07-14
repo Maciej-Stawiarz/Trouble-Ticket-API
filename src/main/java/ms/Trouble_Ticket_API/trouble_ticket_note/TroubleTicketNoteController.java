@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TroubleTicketNoteController implements TroubleTicketNoteAPI {
 	
 	@Override
-	public ResponseEntity<Note> addTroubleTicketNote(NoteCreateRequest request) {
+	public ResponseEntity<Note> addTroubleTicketNote(String id, NoteCreateRequest request) {
 		return null;
 	}
 }

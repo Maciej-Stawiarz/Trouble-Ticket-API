@@ -1,8 +1,10 @@
 package ms.Trouble_Ticket_API.trouble_ticket;
 
 import jakarta.validation.Valid;
-import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
+import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCloseStatusRequest;
+import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketSummary;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCreateRequest;
+import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +17,13 @@ public interface TroubleTicketAPI {
 	ResponseEntity<TroubleTicket> createTroubleTicket(@Valid @RequestBody TroubleTicketCreateRequest request);
 	
 	@GetMapping
-	ResponseEntity<List<TroubleTicket>> listTroubleTicket();
+	ResponseEntity<List<TroubleTicketSummary>> listTroubleTicket();
 	
 	@GetMapping("{id}")
-	ResponseEntity<TroubleTicket> getTroubleTicketById();
+	ResponseEntity<TroubleTicket> getTroubleTicketById(@PathVariable("id") String id);
 	
 	@PatchMapping("{id}")
-	ResponseEntity<TroubleTicket> closeTroubleTicket();
+	ResponseEntity<TroubleTicket> closeTroubleTicket(
+			@PathVariable("id") String id,
+			@Valid @RequestBody TroubleTicketCloseStatusRequest request);
 }

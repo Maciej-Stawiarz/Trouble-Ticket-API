@@ -8,11 +8,11 @@ import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketCreateStat
 public class TroubleTicketCreateRequest {
 	
 	@NotBlank
-	public String externalID;
+	public String externalId;
 	
 	@NotNull
 	@Min(1)
-	public Long serviceID;
+	public Long serviceId;
 	
 	@NotBlank
 	public String description;

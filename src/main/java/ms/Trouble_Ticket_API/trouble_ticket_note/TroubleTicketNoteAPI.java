@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.entities.Note;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.dtos.NoteCreateRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,5 +14,7 @@ public interface TroubleTicketNoteAPI {
 	
 	
 	@PostMapping("{id}/note")
-	ResponseEntity<Note> addTroubleTicketNote(@Valid @RequestBody NoteCreateRequest request);
+	ResponseEntity<Note> addTroubleTicketNote(
+			@PathVariable("id") String id,
+			@Valid @RequestBody NoteCreateRequest request);
 }

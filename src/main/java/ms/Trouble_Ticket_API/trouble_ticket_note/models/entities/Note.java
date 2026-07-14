@@ -1,21 +1,24 @@
 package ms.Trouble_Ticket_API.trouble_ticket_note.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.*;
+import lombok.Builder;
+import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
-@RequiredArgsConstructor
+@Builder
 public class Note {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
 	private String text;
-	private LocalDateTime date;
+	private OffsetDateTime date;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "trouble_ticket_id", nullable = false, updatable = false)
+	private TroubleTicket troubleTicket;
+	
 }
