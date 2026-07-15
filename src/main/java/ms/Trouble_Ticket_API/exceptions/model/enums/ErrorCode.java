@@ -1,4 +1,4 @@
-package ms.Trouble_Ticket_API.exceptions.model.dtos;
+package ms.Trouble_Ticket_API.exceptions.model.enums;
 
 public enum ErrorCode {
 	VALIDATION_ERROR,

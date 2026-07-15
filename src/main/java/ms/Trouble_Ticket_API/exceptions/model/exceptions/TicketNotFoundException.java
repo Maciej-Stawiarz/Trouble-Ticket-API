@@ -1,4 +1,4 @@
-package ms.Trouble_Ticket_API.exceptions;
+package ms.Trouble_Ticket_API.exceptions.model.exceptions;
 
 public class TicketNotFoundException extends RuntimeException {
 	

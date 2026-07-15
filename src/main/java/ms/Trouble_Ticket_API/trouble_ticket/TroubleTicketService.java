@@ -1,8 +1,11 @@
 package ms.Trouble_Ticket_API.trouble_ticket;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import ms.Trouble_Ticket_API.exceptions.TicketNotFoundException;
-import ms.Trouble_Ticket_API.exceptions.ValidationException;
+import ms.Trouble_Ticket_API.exceptions.model.exceptions.TicketNotFoundException;
+import ms.Trouble_Ticket_API.exceptions.model.exceptions.ValidationException;
+import ms.Trouble_Ticket_API.security.TenantContext;
+import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TicketCreationResult;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCloseStatusRequest;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCreateRequest;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketSummary;
@@ -10,7 +13,9 @@ import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketCloseStatus;
 import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketStatus;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.entities.Note;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.Tuple;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,9 +27,10 @@ import java.util.stream.Collectors;
 public class TroubleTicketService {
 	
 	private final TroubleTicketRepository repository;
+	private final TenantContext tenantContext;
 	
-	// TODO: Validate whether is in scope of the user privileges
-	public TroubleTicket create(TroubleTicketCreateRequest request) {
+	@Transactional
+	public TicketCreationResult create(TroubleTicketCreateRequest request) {
 		if (request == null ||
 			request.status == null ||
 			!request.status.equals(TroubleTicketStatus.NEW)) {
@@ -32,39 +38,47 @@ public class TroubleTicketService {
 			throw new ValidationException("Pole status ma niedozwoloną wartość dla tej operacji.");
 		}
 		
-		// TODO: Validate service ID
-//		if (request.serviceId) {
-//			throw new ServiceNotFoundException("Wskazana usługa nie istnieje, nie jest aktywna albo nie należy do tenant scope użytkownika.");
-//		}
+		String tenantId = tenantContext.currentTenantId();
 		
-		Optional<TroubleTicket> ticket = repository.findById(request.externalId);
+		Optional<TroubleTicket> ticket = repository
+				.findByTenantIdAndExternalId(
+						tenantId,
+						request.externalId);
 		
 		if (ticket.isPresent()) {
-			return ticket.get();
-		} else {
-			TroubleTicket newTicket = TroubleTicket.builder()
-					.externalId(request.externalId)
-					.serviceId(request.serviceId)
-					.description(request.description)
-					.status(TroubleTicketStatus.ACKNOWLEDGED)
-					.build();
-			
-			Note newNote = Note.builder()
-					.date(OffsetDateTime.now())
-					.text(request.note)
-					.troubleTicket(newTicket)
-					.build();
-			
-			newTicket.setNotes(List.of(newNote));
-					
-			return repository.save(newTicket);
+			return new TicketCreationResult(ticket.get(), false);
+		}
+		
+		TroubleTicket newTicket = TroubleTicket.builder()
+				.externalId(request.externalId)
+				.serviceId(request.serviceId)
+				.description(request.description)
+				.status(TroubleTicketStatus.ACKNOWLEDGED)
+				.tenantId(tenantId)
+				.build();
+		
+		Note newNote = Note.builder()
+				.date(OffsetDateTime.now())
+				.text(request.note)
+				.build();
+		
+		newTicket.addNote(newNote);
+		
+		try {
+			return new TicketCreationResult(repository.saveAndFlush(newTicket), true);
+		} catch (DataIntegrityViolationException exception) {
+			return repository
+					.findByTenantIdAndExternalId(
+							tenantId,
+							request.externalId)
+					.map(t -> new TicketCreationResult(t, false))
+					.orElseThrow(() -> exception);
 		}
 	}
 	
-	// TODO: Validate whether is in scope of the user privileges
 	public List<TroubleTicketSummary> getAll() {
 		return repository
-				.findAll().stream()
+				.findAllByTenantId(tenantContext.currentTenantId()).stream()
 				.map(troubleTicket -> new TroubleTicketSummary(
 						troubleTicket.getExternalId(),
 						troubleTicket.getServiceId(),
@@ -73,14 +87,13 @@ public class TroubleTicketService {
 				.collect(Collectors.toList());
 	}
 	
-	// TODO: Validate whether is in scope of the user privileges
 	public TroubleTicket get(String id) {
 		return repository
-				.findById(id)
+				.findByTenantIdAndId(tenantContext.currentTenantId(), id)
 				.orElseThrow(() -> new TicketNotFoundException("Zgłoszenie nie istnieje albo nie jest widoczne w tenant scope użytkownika."));
 	}
 	
-	// TODO: Validate whether is in scope of the user privileges
+	@Transactional
 	public TroubleTicket close(String id, TroubleTicketCloseStatusRequest request) {
 		if (request == null ||
 			request.status == null ||

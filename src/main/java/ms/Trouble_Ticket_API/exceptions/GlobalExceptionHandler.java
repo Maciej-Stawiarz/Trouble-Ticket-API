@@ -1,12 +1,17 @@
 package ms.Trouble_Ticket_API.exceptions;
 
 import ms.Trouble_Ticket_API.exceptions.model.dtos.Error;
-import ms.Trouble_Ticket_API.exceptions.model.dtos.ErrorCode;
+import ms.Trouble_Ticket_API.exceptions.model.enums.ErrorCode;
+import ms.Trouble_Ticket_API.exceptions.model.exceptions.ServiceNotFoundException;
+import ms.Trouble_Ticket_API.exceptions.model.exceptions.TicketNotFoundException;
+import ms.Trouble_Ticket_API.exceptions.model.exceptions.ValidationException;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static ms.Trouble_Ticket_API.security.RequestIdFilter.MDC_KEY;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,7 +21,7 @@ public class GlobalExceptionHandler {
 		ms.Trouble_Ticket_API.exceptions.model.dtos.Error error = ms.Trouble_Ticket_API.exceptions.model.dtos.Error.builder()
 				.code(ErrorCode.VALIDATION_ERROR.name())
 				.message(exception.getMessage())
-				.requestID(MDC.get("requestId"))
+				.requestID(MDC.get(MDC_KEY))
 				.build();
 		
 		return new ResponseEntity<>(
@@ -29,7 +34,7 @@ public class GlobalExceptionHandler {
 		ms.Trouble_Ticket_API.exceptions.model.dtos.Error error = Error.builder()
 				.code(ErrorCode.TROUBLE_TICKET_NOT_FOUND.name())
 				.message(exception.getMessage())
-				.requestID(MDC.get("requestId"))
+				.requestID(MDC.get(MDC_KEY))
 				.build();
 		
 		return new ResponseEntity<>(
@@ -42,7 +47,7 @@ public class GlobalExceptionHandler {
 		Error error = Error.builder()
 				.code(ErrorCode.SERVICE_NOT_FOUND.name())
 				.message(exception.getMessage())
-				.requestID(MDC.get("requestId"))
+				.requestID(MDC.get(MDC_KEY))
 				.build();
 		
 		return new ResponseEntity<>(

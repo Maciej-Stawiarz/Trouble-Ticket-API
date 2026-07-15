@@ -1,11 +1,11 @@
 package ms.Trouble_Ticket_API.trouble_ticket;
 
 import lombok.RequiredArgsConstructor;
+import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TicketCreationResult;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCloseStatusRequest;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketSummary;
 import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCreateRequest;
-import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,15 +20,15 @@ public class TroubleTicketController implements TroubleTicketAPI {
 	
 	@Override
 	public ResponseEntity<TroubleTicket> createTroubleTicket(TroubleTicketCreateRequest request) {
-		TroubleTicket ticket = service.create(request);
+		TicketCreationResult ticket = service.create(request);
 		
-		if (ticket.getStatus().equals(TroubleTicketStatus.ACKNOWLEDGED)) {
+		if (ticket.wasCreated) {
 			return new ResponseEntity<>(
-					ticket,
+					ticket.troubleTicket,
 					HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(
-					ticket,
+					ticket.troubleTicket,
 					HttpStatus.OK);
 		}
 	}

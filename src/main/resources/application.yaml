@@ -1,3 +1,7 @@
 spring:
   application:
     name: Trouble-Ticket-API
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
