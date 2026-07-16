@@ -1,5 +1,6 @@
 package ms.Trouble_Ticket_API.trouble_ticket_note.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
@@ -25,6 +26,7 @@ public class Note {
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "trouble_ticket_id", nullable = false, updatable = false)
+	@JsonIgnore
 	@Setter private TroubleTicket troubleTicket;
 	
 }

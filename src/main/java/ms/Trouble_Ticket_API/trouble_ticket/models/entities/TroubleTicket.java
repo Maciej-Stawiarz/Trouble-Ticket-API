@@ -35,6 +35,7 @@ public class TroubleTicket {
 	
 	@OneToMany(mappedBy = "troubleTicket", cascade = CascadeType.PERSIST)
 	@OrderBy("date ASC")
+	@Builder.Default
 	private List<Note> notes = new ArrayList<>();
 	
 	@Column(name = "tenant_id", updatable = false, nullable = false)

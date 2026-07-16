@@ -1,7 +1,21 @@
 spring:
   application:
     name: Trouble-Ticket-API
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 security:
   jwt:
     secret: ${JWT_SECRET}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1

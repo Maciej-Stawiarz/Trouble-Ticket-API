@@ -11,11 +11,11 @@ import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketCreateReque
 import ms.Trouble_Ticket_API.trouble_ticket.models.dtos.TroubleTicketSummary;
 import ms.Trouble_Ticket_API.trouble_ticket.models.entities.TroubleTicket;
 import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketCloseStatus;
+import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketCreateStatus;
 import ms.Trouble_Ticket_API.trouble_ticket.models.enums.TroubleTicketStatus;
 import ms.Trouble_Ticket_API.trouble_ticket_note.models.entities.Note;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.Tuple;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -33,7 +33,7 @@ public class TroubleTicketService {
 	public TicketCreationResult create(TroubleTicketCreateRequest request) {
 		if (request == null ||
 			request.status == null ||
-			!request.status.equals(TroubleTicketStatus.NEW)) {
+			!request.status.equals(TroubleTicketCreateStatus.NEW)) {
 			
 			throw new ValidationException("Pole status ma niedozwoloną wartość dla tej operacji.");
 		}

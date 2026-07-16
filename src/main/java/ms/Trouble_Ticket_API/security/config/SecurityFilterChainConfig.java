@@ -24,8 +24,7 @@ public class SecurityFilterChainConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/api/v1/**").authenticated()
-					.anyRequest().denyAll())
+					.requestMatchers("/**").authenticated())
 			.oauth2ResourceServer(oauth2 -> oauth2
 					.jwt(jwt -> jwt.decoder(jwtDecoder))
 					.authenticationEntryPoint(entryPoint)
