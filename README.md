@@ -1,10 +1,19 @@
+# Before you start
+
+
+Make sure you have those technologies and tools installed and configured:
+-  Docker Desktop 
+- Java 21 
+- Maven 
+- Intellij IDEA or other IDE
+
 # How to start working with the application
 
 
 ## 1. Setting up variables in .env file
-In the root layer of files, you can find a file named _.env.example_. This file serves as a template for the much needed _**.env**_ file, that
+In the root directory, you can find a file named _.env.example_. This file serves as a template for the required _**.env**_ file, that
 you need to create in order for the docker-compose.yml file to work. It contains properties, which go to the docker-compose.yml file, which cannot or rather, 
-should not normally be commited to the repository (such as usernames and passwords).
+should not normally be committed to the repository (such as usernames and passwords).
 
 To be able to start the database service, you need to create _**.env**_ file in the same folder as _docker-compose.yml_ file and
 make sure all properties used in the services, that are marked with _**${}**_ are present in the .env file with
@@ -24,7 +33,7 @@ _**ALTERNATIVELY**_
 If you are using any IDE that supports docker-compose.yml files, like Intellij IDEA does, you can navigate to the docker-compose.yml file
 in the IDEA and click **green arrow** next to the service to start it.
 
-## 3. Setting up environmental variables for application.yml file (Only when running through IDE)
+## 3. Setting up environment variables for application.yml file (Only when running through IDE)
 To set up variables in the _application.yml_ file, which will allow you to start the application, you need to either:
 
 **OPTION 1**
@@ -37,8 +46,8 @@ Replace all the placeholders with actual values, that is:
 **OPTION 2**
 
 You will still have to replace those values, but instead of removing the placeholders, you can directly place
-those values in the environmental variables. Intellij IDEA allows you to do that in the configuration of your start-up,
-in the option _environmental variables_.
+those values in the environment variables. Intellij IDEA allows you to do that in the configuration of your start-up,
+in the option _environment variables_.
 
 
 ## 4. Starting application service
@@ -55,7 +64,7 @@ After you have done it, all you have to do is to run command _**docker compose u
 Since all requests need to be validated against JWT Bearer token and all other requests are to be invalidated,
 we need a way to generate that token to help our request pass through. To achieve that, we need to do a couple of things:
 
-1. First, we have to have defined _JWT_SECRET_ property in the environmental variables. This topic is covered in the major topic nr _**3**_.
+1. First, we have to have defined _JWT_SECRET_ property in the environment variables. This topic is covered in the major topic nr _**3**_.
 2. Now, we need to go to the website _jwt.io_ and manually create the token.
 3. We select the option to encode a token
 4. We give it in the header:
@@ -93,8 +102,8 @@ _eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJ0ZW5hbnRJZCI6Ij
 # Important design decisions
 
 ## 1. Authentication and authorization
-Basing on the contract lacking any endpoints related to generating source of authentication and authorization, I assumed that
-JWT is being generated in by other application / IdP / Authorization Server / etc. Therefor, given such assumptions, I've not 
+Based on the contract lacking any endpoints related to generating source of authentication and authorization, I assumed that
+JWT is being generated in by other application / IdP / Authorization Server / etc. Therefore, given such assumptions, I've not 
 implemented a way to generate the token in the application, focusing only on actually using it. If dummy token is needed, it's
 present in topic nr _**5**_ in _**How to start working in the application**_. In the same topic, process to generate another token
 was described.
@@ -106,12 +115,12 @@ I use OAuth2 for comfort and ease of implementation.
 
 ## 2. Tenant ID
 Tenant ID is not defined anywhere in the API contract, but is used in the database validations many times and is carried by JWT,
-therefor I added it to the TroubleTicket Entity to actually enable validations based on its presence and value.
+therefore I added it to the TroubleTicket Entity to actually enable validations based on its presence and value.
 
 ## 3. 404 ServiceNotFound
 While one of the methods in the API contract is expected to throw an error depending on the presence and lack of service id,
 there is no database structure nor there is any description of external service providing service id or any sort of relationship
-existing between any tables that might hold the data. Therefor while I handled 404 ServiceNotFound exceptions, 
+existing between any tables that might hold the data. Therefore while I handled 404 ServiceNotFound exceptions, 
 they do not appear since there is nothing to check the service id against.
 
 ## 4. Request ID

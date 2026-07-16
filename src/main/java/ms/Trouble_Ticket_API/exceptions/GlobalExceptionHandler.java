@@ -8,6 +8,7 @@ import ms.Trouble_Ticket_API.exceptions.model.exceptions.ValidationException;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -53,5 +54,18 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(
 				error,
 				HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	ResponseEntity<Error> handleMethodNotValidException(MethodArgumentNotValidException exception) {
+		Error error = Error.builder()
+				.code(ErrorCode.VALIDATION_ERROR.name())
+				.message(exception.getMessage())
+				.requestID(MDC.get(MDC_KEY))
+				.build();
+		
+		return new ResponseEntity<>(
+				error,
+				HttpStatus.BAD_REQUEST);
 	}
 }
