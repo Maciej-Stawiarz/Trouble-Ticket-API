@@ -88,3 +88,33 @@ _Ppv2Gc10kAZrO80MXnP24EvRHhMpQgGGOZXfgoqW9GW_
 
 **Final Token** (This one is valid for a year, so it can also just be used):
 _eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJ0ZW5hbnRJZCI6IjdkYTc0NWU0LTQ4ZDItNDAxMy05MDE1LTVjOGJhODQ1MmEwZCIsImlhdCI6MTc4NDE1ODA4NSwiZXhwIjoxODE1Njk0MDg1fQ.P14960NX5KId0AzAuDgRrcBPtlNAW8mbgNCmbu9xmvk_
+
+
+# Important design decisions
+
+## 1. Authentication and authorization
+Basing on the contract lacking any endpoints related to generating source of authentication and authorization, I assumed that
+JWT is being generated in by other application / IdP / Authorization Server / etc. Therefor, given such assumptions, I've not 
+implemented a way to generate the token in the application, focusing only on actually using it. If dummy token is needed, it's
+present in topic nr _**5**_ in _**How to start working in the application**_. In the same topic, process to generate another token
+was described.
+
+I also assumed that everything was properly validated beforehand by Authorization Server and did not double-check tenant id
+in the database, since this should be taken care of by the other service.
+
+I use OAuth2 for comfort and ease of implementation.
+
+## 2. Tenant ID
+Tenant ID is not defined anywhere in the API contract, but is used in the database validations many times and is carried by JWT,
+therefor I added it to the TroubleTicket Entity to actually enable validations based on its presence and value.
+
+## 3. 404 ServiceNotFound
+While one of the methods in the API contract is expected to throw an error depending on the presence and lack of service id,
+there is no database structure nor there is any description of external service providing service id or any sort of relationship
+existing between any tables that might hold the data. Therefor while I handled 404 ServiceNotFound exceptions, 
+they do not appear since there is nothing to check the service id against.
+
+## 4. Request ID
+Since there was no mentions of where the request ID comes from, I implemented a feature where users can provided request ID
+by using X-Request-id header. If the header is not present, random UUID value is being generated and attached to the request
+to be used in logs.
