@@ -1,15 +1,44 @@
 services:
+  application:
+    image: ms/trouble_ticket_api
+    container_name: trouble_ticket_api
+    environment:
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+
   database:
     image: postgres:18
     container_name: database
+    restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 6
+      start_period: 3s
+      timeout: 10s
     ports:
       - "5432:5432"
+    networks:
+      - app-network
     volumes:
       - postgres-data:/var/lib/postgresql
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres-data:

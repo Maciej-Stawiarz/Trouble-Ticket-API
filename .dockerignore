@@ -1,0 +1,12 @@
+.idea
+.mvn
+target
+.dockerignore
+.env.example
+.gitattributes
+.gitignore
+docker-compose.yml
+Dockerfile
+mvnw
+mvnw.cmd
+README.md
